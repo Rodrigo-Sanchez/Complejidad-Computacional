@@ -1,4 +1,6 @@
-# Complejidad Computacional.
+# Conjunto Independiente.
+
+Es un conjunto de vértices en una gráfica tal que ninguno de sus vértices es adyacente a otro. Es decir, es un conjunto de vértices tal que para ningún par de ellos existe alguna arista que los conecten.
 
 ## Autor
 
@@ -8,7 +10,7 @@
 
 <rodrigosanchez@ciencias.unam.mx>
 
-## Programa1
+## Programa 1
 
 Para compilar es necesario escribir en la consola:
 ```
