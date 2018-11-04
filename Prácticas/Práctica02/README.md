@@ -5,12 +5,12 @@ Algoritmo de aproximación del Bin Packing Problem.
 ## Programa 02
 
 Para compilar es necesario escribir en la consola:
-```
+```console
 $ javac BinPacking.java
 ```
 
 Para ejecutar el programa debes teclear en la consola:
-```
+```console
 $ java BinPacking
 ```
 
@@ -22,7 +22,7 @@ Digita 8 items pulsando enter:
 0.1 0.4 0.2 0.4 0.3 0.85 0.5 0.2
 ```
 
-El programa va a mostrar los items originales, ordenados de manera no incremental, bins iniciales, iteraciones de los bins, bins finales y los bins requeridos para este ejemplar.
+El programa va a mostrar los items originales, ordenados de manera no incremental, bins iniciales, iteraciones de los bins-items, capacidad sobrante de cada bin, capacidad ocupada de cada bin y los bins requeridos para este ejemplar.
 
 ## Autor
 

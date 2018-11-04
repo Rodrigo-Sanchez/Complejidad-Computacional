@@ -14,8 +14,15 @@ public class BinPacking {
 
         System.out.println("Digita "+n+" items pulsando enter: ");
         ArrayList<BigDecimal> items = new ArrayList<BigDecimal>(); //
-        for(int i = 0; i < n; i++)
-            items.add(sc.nextBigDecimal());
+        for(int i = 0; i < n; i++) {
+            BigDecimal item, one = new BigDecimal(1);
+            do {
+                item = sc.nextBigDecimal();
+                if(item.compareTo(one) > 0)
+                    System.out.println("¡Ingresa un entero menor igual a 1!");
+            } while(item.compareTo(one) > 0);
+            items.add(item);
+        }
 
         // Llamamos al método binPacking con items, cantidad y capacidad.
         binPacking(items, n, new BigDecimal(1.0));
