@@ -13,7 +13,7 @@ public class BinPacking {
         int n = sc.nextInt();
 
         System.out.println("Digita "+n+" items pulsando enter: ");
-        ArrayList<BigDecimal> items = new ArrayList<BigDecimal>(); //
+        ArrayList<BigDecimal> items = new ArrayList<BigDecimal>();
         for(int i = 0; i < n; i++) {
             BigDecimal item, one = new BigDecimal(1);
             do {
