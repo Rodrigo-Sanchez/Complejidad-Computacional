@@ -7,7 +7,6 @@ package geneticalgorithm;
 
 import java.util.Arrays;
 import java.util.ArrayList;
-//import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -23,34 +22,29 @@ public class MAXSAT {
         System.out.println("Algoritmo Genético para MAXSAT.\n");
 
         Clausule clausule = new Clausule();
-        System.out.println(clausule.toString());
+        TruthAssignment truthAssignment = new TruthAssignment();
 
         int[][] initialPopulation = createPopulation();
-        ArrayList<Integer>[] clausules = clausule.createClausules(initialPopulation);
-        // ArrayList<Integer> array[] = createLists(initialPopulation.length);
-        // for(int i = 0; i < initialPopulation.length; i++) {
-        //     for(int j = 0; j < initialPopulation[0].length; j++) {
-        //         array[i].add(initialPopulation[i][j]);
-        //     }
-        // }
+        ArrayList<Clausule>[] clausules = clausule.createClausules(initialPopulation);
+        System.out.println(clausule.toString(clausules));
 
         // Imprimimos 
         //System.out.println(Arrays.deepToString(array));
         
         // printMatrix(initialPopulation);
-        printClausules(initialPopulation);
+        Clausule.printClausules(initialPopulation);
         
-        ArrayList<Integer> truthAssignment = createTruthAssignment(initialPopulation[0].length);
-        System.out.println("Asignación de verdad de las variables: " + Arrays.toString(truthAssignment.toArray()));
+        ArrayList<Integer> assignment = truthAssignment.create(initialPopulation[0].length);
+        System.out.println(truthAssignment.toString());
 
-        ArrayList<Integer>[] resultTruthAssignment;
+        ArrayList<Clausule>[] resultTruthAssignment;
         //System.out.println("Asignación de verdad de las variables: " + Arrays.deepToString(resultTruthAssignment));
-        resultTruthAssignment = evaluateTruthAssignment(clausules, truthAssignment);
+        resultTruthAssignment = TruthAssignment.evaluate(clausules, assignment);
 
-        printClausules(resultTruthAssignment);
+        //printClausules(resultTruthAssignment);
 
-        int fitness = fitness(resultTruthAssignment);
-        System.out.println("El fitness de esta población es: "+fitness);
+        //int fitness = fitness(resultTruthAssignment);
+        //System.out.println("El fitness de esta población es: "+fitness);
     }
 
 
@@ -77,7 +71,7 @@ public class MAXSAT {
         ArrayList<Integer> positions = new ArrayList<>();
 
         // A cada cláusula le agregamos de 3 a 5 variables.
-        for (int[] population1 : population) {
+        for (int[] pop : population) {
             // Creamos el random para validar la cardinalidad de las variables.
             variables = ThreadLocalRandom.current().nextInt(minVariable, maxVariable+1);
             for(int v = 0; v < variables; v++) {
@@ -87,7 +81,7 @@ public class MAXSAT {
             for (int j = 0; j < population[0].length; j++) {
                 paridad = ThreadLocalRandom.current().nextInt(2);
                 // Si está la variable, agregamos la posición ya sea en positivo o negativo, en otro caso un 0.
-                population1[j] = positions.contains(j) ? (paridad > 0 ? j+1 : -(j+1)) : 0;
+                pop[j] = positions.contains(j) ? (paridad > 0 ? j+1 : -(j+1)) : 0;
                 // population[i][j] = positions.contains(j) ? j+1 : -(j+1);
                 // population[i][j] = positions.contains(j) ? 1 : 0;
             }
@@ -114,85 +108,6 @@ public class MAXSAT {
                 System.out.println("]");
             }
         );
-    }
-
-
-    public static void printClausules(int[][] matrix) {
-        int element;
-        for(int i = 0; i < matrix.length; i++) {
-            System.out.print("Cláusula "+ (i+1) +": [");
-            for(int j = 0; j < matrix[0].length; j++) {
-                element = matrix[i][j];
-                if(element > 0) {
-                    System.out.print("x" + element + ", ");
-                } else if(element < 0) {
-                    System.out.print("¬x" + Math.abs(element) + ", ");
-                }
-            }
-            System.out.println("]");
-        }
-    }
-
-
-    public static void printClausules(ArrayList<Integer> array[]) {
-        int element;
-        for(int i = 0; i < array.length; i++) {
-            System.out.print("Cláusula "+ (i+1) +": [");
-            for(int j = 0; j < array[0].size(); j++) {
-                element = array[i].get(j);
-                if(element > 0) {
-                    System.out.print("x" + element + ", ");
-                } else if(element < 0) {
-                    System.out.print("¬x" + Math.abs(element) + ", ");
-                }
-            }
-            System.out.println("]");
-        }
-    }
-
-
-    public static ArrayList<Integer>[] evaluateTruthAssignment(ArrayList<Integer>[] population, ArrayList<Integer> truthAsssignment) {
-        int element;
-        int truth;
-
-        for(ArrayList<Integer> population1 : population) {
-            for(int j = 0; j < population[0].size(); j++) {
-                element = population1.get(j);
-                truth = truthAsssignment.get(j);
-                population1.set(j, element*truth);
-                // if(element > 0) {
-                //     population[i].set(j, element*truth);
-                // } else if(element < 0) {
-                //     if(truth == 0) {
-                //         population[i].set(j, element*-1);
-                //     }
-                // }
-            }
-            // array[i].add(population[i][j]);
-            // System.out.println(population[i]);
-        }
-
-        // Quitamos todos los ceros.
-        // ArrayList<Integer> zero = new ArrayList<>();
-        // zero.add(0);
-
-        // for(ArrayList<Integer> array : population) {
-        //     array.removeAll(zero);
-        // }
-
-        return population;
-    }
-
-
-    public static ArrayList<Integer> createTruthAssignment(int n) {
-        ArrayList<Integer> truthAsssignment = new ArrayList<Integer>();
-        int random;
-        for(int i = 0; i < n; i++) {
-            // 1 sigmifica True, -1 significa False.
-            random = ThreadLocalRandom.current().nextBoolean() ? 1 : -1;
-            truthAsssignment.add(random);
-        }
-        return truthAsssignment;
     }
 
 
