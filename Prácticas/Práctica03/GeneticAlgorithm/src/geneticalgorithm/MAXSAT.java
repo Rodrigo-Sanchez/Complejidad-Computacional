@@ -42,8 +42,8 @@ public class MAXSAT {
 
         Clausule.printClausules(resultTruthAssignment);
 
-        //int fitness = fitness(resultTruthAssignment);
-        //System.out.println("El fitness de esta población es: "+fitness);
+        int fitness = calculaFitness(resultTruthAssignment);
+        System.out.println("El fitness de esta población es: "+fitness);
     }
 
 
@@ -91,15 +91,36 @@ public class MAXSAT {
         return population;
     }
 
-
-
-    public static int fitness(ArrayList<Integer>[] population) {
+    
+    public static int fitness(Clausule clausule) {
         int total = 0;
-        for(int i = 0; i < population.length; i++) {
-            for(int j = 0; j < population[0].size(); j++) {
-                total += population[i].get(j) > 0 ? 1 : 0;
-            }
+        for(int i = 0; i < clausule.variables.size(); i++) {
+            total += clausule.variables.get(i) > 0 ? 1 : 0;
+        }
+        clausule.satisfy = total;
+        // System.out.println(clausule.satisfy);
+        return total;
+    }
+    
+
+    public static int calculaFitness(ArrayList<Clausule> clausules) {
+        int total = 0;
+        for(Clausule clausule : clausules){
+            fitness(clausule);
+            total += clausule.satisfy;
         }
         return total;
     }
+    
+
+//    public static int fitness(ArrayList<Clausule> population) {
+//        int total = 0;
+//        for(int i = 0; i < population.size(); i++) {
+//            for(int j = 0; j < population.get(i).size(); j++) {
+//                total += population.get(i).getVariable(j) > 0 ? 1 : 0;
+//            }
+//        }
+//        return total;
+//    }
+
 }
