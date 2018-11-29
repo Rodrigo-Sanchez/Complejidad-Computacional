@@ -14,21 +14,34 @@ import java.util.ArrayList;
  */
 class Clausule {
     
+    // Una cláusula contiene una lista de variables.
     ArrayList<Integer> variables;
+    // Tiene un número que representa la cantidad de variables que satisface la asignación de verdad que codifica.
     int satisfy;
 
+    /**
+     * Constructor de una cláusula.
+     */
     public Clausule() {
-        this.variables = new ArrayList<Integer>();
+        this.variables = new ArrayList<>();
     }
 
+    /**
+     * Constructor de una cláusula a partir de otra.
+     * @param clausule La cláusula con la que va a crear otra cláusula.
+     */
     public Clausule(Clausule clausule) {
         this.satisfy = clausule.satisfy;
-        this.variables = new ArrayList<Integer>();
+        this.variables = new ArrayList<>();
         this.variables.addAll(clausule.variables);
     }
 
+    /**
+     * Constructor que crea una cláusula a partir de un arreglo.
+     * @param arr Arreglo con el cual vamos a crear una cláusula.
+     */
     public Clausule(int[] arr) {
-        this.variables = new ArrayList<Integer>();
+        this.variables = new ArrayList<>();
         for(int i = 0; i < arr.length; i++) {
             this.variables.add(arr[i]);
         }
@@ -47,17 +60,18 @@ class Clausule {
         return array;
     }
 
-    /*
-     *
-     *
+    /**
+     * Crea un arreglo de cláusulas a partir de una matriz.
+     * @param initialPopulation Matriz de enteros bidimensional.
+     * @return clausules El arreglo de cláusulas.
      */
     public ArrayList<Clausule> create(int[][] initialPopulation) {
         int n = initialPopulation.length;
         ArrayList<Clausule> clausules = createLists(n);
         for(int i = 0; i < n; i++) {
-             for(int j = 0; j < initialPopulation[0].length; j++) {
-                 clausules.get(i).variables.add(initialPopulation[i][j]);
-             }
+            for(int j = 0; j < initialPopulation[0].length; j++) {
+                clausules.get(i).variables.add(initialPopulation[i][j]);
+            }
         }
         return clausules;
     }
@@ -89,8 +103,13 @@ class Clausule {
         this.variables.set(i, n);
     }
 
+    public void copy(Clausule clausule){
+        this.variables.clear();
+        this.variables.addAll(clausule.variables);
+        this.satisfy = clausule.satisfy;
+    }
+
     public ArrayList<Clausule> getClausule(ArrayList<Clausule>[] clausules, int i) {
-        // ArrayList<Clausule> clausule;
         return clausules[i];
     }
 
