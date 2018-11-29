@@ -22,11 +22,6 @@ class TruthAssignment {
         this.assignment = new ArrayList<>();
     }
 
-//    public TruthAssignment(TruthAssignment truthAssignment) {
-//        this.assignment = new ArrayList<>();
-//        this.assignment.addAll(asssignment.assignment);
-//    }
-
 
     public ArrayList<Integer> create(int n) {
         int random;
@@ -39,17 +34,19 @@ class TruthAssignment {
     }
 
 
-    public static ArrayList<Clausule>[] evaluate(ArrayList<Clausule>[] population, ArrayList<Integer> truthAsssignment) {
+    public static ArrayList<Clausule> evaluate(ArrayList<Clausule> population, ArrayList<Integer> truthAsssignment) {
         int variable, assignment;
 
-        System.out.println(Clausule.toString(population));
-//        for(int i = 0; i < population.length; i++) {
-//            for(int j = 0; j < population[0].size(); j++) {
-//                variable = population[i].get(j);
-//                assignment = truthAsssignment.get(j);
-//                clausule.set(j, variable*assignment);
-//            }
-//        }
+        for(int i = 0; i < population.size(); i++) {
+            for(int j = 0; j < population.get(i).size(); j++) {
+                if(population.get(i).getVariable(j) != 0) {
+                    //System.out.println("Variable: "+population.get(i).getVariable(j));
+                    //System.out.println("Asignación: "+truthAsssignment.get(j));
+                    population.get(i).setVariable(j, population.get(i).getVariable(j) * truthAsssignment.get(j));
+                    //System.out.println("Nueva: "+population.get(i).getVariable(j));
+                }
+            }
+        }
 
         return population;
     }
@@ -57,5 +54,9 @@ class TruthAssignment {
     @Override
     public String toString() {
         return Arrays.toString(this.assignment.toArray());
+    }
+
+    public static String toString(ArrayList<Clausule>[] assignment) {
+        return Arrays.deepToString(assignment);
     }
 }

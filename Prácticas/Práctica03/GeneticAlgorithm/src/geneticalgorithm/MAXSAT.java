@@ -25,23 +25,22 @@ public class MAXSAT {
         TruthAssignment truthAssignment = new TruthAssignment();
 
         int[][] initialPopulation = createPopulation();
-        ArrayList<Clausule>[] clausules = clausule.createClausules(initialPopulation);
-        System.out.println(clausule.toString(clausules));
+        ArrayList<Clausule> clausules = clausule.create(initialPopulation);
+        System.out.println(clausules.toString());
 
-        // Imprimimos 
-        //System.out.println(Arrays.deepToString(array));
+        //Imprimimos las variables de la cláusula.
+        //Clausule.printVariables(initialPopulation);
         
-        // printMatrix(initialPopulation);
+        //Imprimimos las cláusulas.
         Clausule.printClausules(initialPopulation);
-        
-        ArrayList<Integer> assignment = truthAssignment.create(initialPopulation[0].length);
-        System.out.println(truthAssignment.toString());
 
-        ArrayList<Clausule>[] resultTruthAssignment;
-        //System.out.println("Asignación de verdad de las variables: " + Arrays.deepToString(resultTruthAssignment));
+        ArrayList<Integer> assignment = truthAssignment.create(initialPopulation[0].length);
+        System.out.println(assignment.toString());
+
+        ArrayList<Clausule> resultTruthAssignment;
         resultTruthAssignment = TruthAssignment.evaluate(clausules, assignment);
 
-        //printClausules(resultTruthAssignment);
+        Clausule.printClausules(resultTruthAssignment);
 
         //int fitness = fitness(resultTruthAssignment);
         //System.out.println("El fitness de esta población es: "+fitness);
@@ -71,7 +70,7 @@ public class MAXSAT {
         ArrayList<Integer> positions = new ArrayList<>();
 
         // A cada cláusula le agregamos de 3 a 5 variables.
-        for (int[] pop : population) {
+        for (int[] population1 : population) {
             // Creamos el random para validar la cardinalidad de las variables.
             variables = ThreadLocalRandom.current().nextInt(minVariable, maxVariable+1);
             for(int v = 0; v < variables; v++) {
@@ -81,7 +80,7 @@ public class MAXSAT {
             for (int j = 0; j < population[0].length; j++) {
                 paridad = ThreadLocalRandom.current().nextInt(2);
                 // Si está la variable, agregamos la posición ya sea en positivo o negativo, en otro caso un 0.
-                pop[j] = positions.contains(j) ? (paridad > 0 ? j+1 : -(j+1)) : 0;
+                population1[j] = positions.contains(j) ? (paridad > 0 ? j+1 : -(j+1)) : 0;
                 // population[i][j] = positions.contains(j) ? j+1 : -(j+1);
                 // population[i][j] = positions.contains(j) ? 1 : 0;
             }
@@ -92,23 +91,6 @@ public class MAXSAT {
         return population;
     }
 
-
-    public static void printMatrix(int[][] matrix) {
-        Arrays.stream(matrix)
-        .forEach(
-            (row) -> {
-                System.out.print("[");
-                Arrays.stream(row)
-                .forEach(
-                    (element) -> {
-                        if(element != 0)
-                            System.out.print(+ element + ", ");
-                    }
-                );
-                System.out.println("]");
-            }
-        );
-    }
 
 
     public static int fitness(ArrayList<Integer>[] population) {

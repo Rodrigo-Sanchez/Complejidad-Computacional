@@ -39,32 +39,28 @@ class Clausule {
      * @param n numero de arreglos a crear.
      * @return Lista de arreglos.
      */
-    public ArrayList<Clausule>[] createLists(int n) {
-        ArrayList<Clausule> list[] = new ArrayList[n];
+    public ArrayList<Clausule> createLists(int n) {
+        ArrayList<Clausule> array = new ArrayList<>();
         for(int i = 0; i < n; i++) {
-            list[i] = new ArrayList<>();
+            array.add(new Clausule());
         }
-        return list;
+        return array;
     }
 
     /*
      *
      *
      */
-    public ArrayList<Clausule>[] createClausules(int[][] initialPopulation) {
+    public ArrayList<Clausule> create(int[][] initialPopulation) {
         int n = initialPopulation.length;
-        Clausule clausule;
-        ArrayList<Clausule> clausules[] = createLists(n);
+        ArrayList<Clausule> clausules = createLists(n);
         for(int i = 0; i < n; i++) {
-            clausule = new Clausule(initialPopulation[i]);
-            clausules[i].add(clausule);
-            // for(int j = 0; j < initialPopulation[0].length; j++) {
-            //     clausules[i].add(initialPopulation[i][j]);
-            // }
+             for(int j = 0; j < initialPopulation[0].length; j++) {
+                 clausules.get(i).variables.add(initialPopulation[i][j]);
+             }
         }
         return clausules;
     }
-
 
     public int getSatisfy() {
         return this.satisfy;
@@ -75,11 +71,32 @@ class Clausule {
         this.satisfy = satisfy;
     }
 
+    public ArrayList<Integer> getVariables() {
+        return this.variables;
+    }
+
+
+    public void setVariables(ArrayList<Integer> variables) {
+        this.variables.addAll(variables);
+    }
+
+    
+    public int getVariable(int n) {
+        return this.variables.get(n);
+    }
+
+    public void setVariable(int i, int n) {
+        this.variables.set(i, n);
+    }
+
     public ArrayList<Clausule> getClausule(ArrayList<Clausule>[] clausules, int i) {
         // ArrayList<Clausule> clausule;
         return clausules[i];
     }
 
+    public int size() {
+        return this.variables.size();
+    }
 
     @Override
     public String toString() {
@@ -91,6 +108,22 @@ class Clausule {
         return Arrays.deepToString(variables);
     }
 
+    public static void printVariables(int[][] matrix) {
+        Arrays.stream(matrix)
+        .forEach(
+            (row) -> {
+                System.out.print("[");
+                Arrays.stream(row)
+                .forEach(
+                    (element) -> {
+                        if(element != 0)
+                            System.out.print(+ element + ", ");
+                    }
+                );
+                System.out.println("]");
+            }
+        );
+    }
 
     public static void printClausules(int[][] matrix) {
         int element;
@@ -109,12 +142,12 @@ class Clausule {
     }
 
 
-    public static void printClausules(ArrayList<Integer> array[]) {
+    public static void printClausules(ArrayList<Clausule> array) {
         int element;
-        for(int i = 0; i < array.length; i++) {
+        for(int i = 0; i < array.size(); i++) {
             System.out.print("Cláusula "+ (i+1) +": [");
-            for(int j = 0; j < array[0].size(); j++) {
-                element = array[i].get(j);
+            for(int j = 0; j < array.get(i).size(); j++) {
+                element = array.get(i).getVariable(j);
                 if(element > 0) {
                     System.out.print("x" + element + ", ");
                 } else if(element < 0) {
