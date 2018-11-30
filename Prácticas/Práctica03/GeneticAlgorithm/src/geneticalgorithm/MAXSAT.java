@@ -22,37 +22,6 @@ public class MAXSAT {
     static Clausule best;
     TruthAssignment truthAssignment;
 
-    public MAXSAT() {
-         clausule = new Clausule();
-         globalOptimum = new Clausule();
-         localOptimum = new Clausule();
-         truthAssignment = new TruthAssignment();
-
-         int[][] initialPopulation = createPopulation();
-        
-         clausules = clausule.create(initialPopulation);
-         System.out.println(clausules.toString());
-
-         //Imprimimos las variables de la cláusula.
-         //Clausule.printVariables(initialPopulation);
-        
-         //Imprimimos las cláusulas.
-         Clausule.printClausules(initialPopulation);
-
-         ArrayList<Integer> assignment = truthAssignment.create(initialPopulation[0].length);
-         System.out.println(assignment.toString());
-
-         ArrayList<Clausule> resultTruthAssignment;
-         resultTruthAssignment = TruthAssignment.evaluate(clausules, assignment);
-
-         Clausule.printClausules(resultTruthAssignment);
-
-         // Calculamos el fitness de la población.
-         int fitness = calculateFitness(resultTruthAssignment);
-         System.out.println("El fitness de esta población es: "+fitness);
-    }
-
-
     public static int[][] createPopulation() {
         int minClausule = 50;
         int maxClausule = 60;
@@ -140,10 +109,10 @@ public class MAXSAT {
             globalOptimum.copy(localOptimum);
         }
 
-        best = new Clausule(localOptimum); //El mejor tour siempre será seleccionado.
+        best = new Clausule(localOptimum);
         clausuleV.add(localOptimum);
         
-        int[] ru = new int[clausules.size()]; //Este arreglo servirá como ruleta.
+        int[] ru = new int[clausules.size()];
         ru[0] = max - clausules.get(0).satisfy + 100;
         for(int i=1; i < clausules.size(); i++) {
             ru[i] = ru[i-1] + max - clausules.get(i).satisfy + 100;
@@ -171,14 +140,14 @@ public class MAXSAT {
      */
     public static void main(String args[]) {
         Clausule clausule = new Clausule();
-        Clausule globalOptimum = new Clausule();
-        Clausule localOptimum = new Clausule();
         TruthAssignment truthAssignment = new TruthAssignment();
 
         int[][] initialPopulation = createPopulation();
 
         clausules = clausule.create(initialPopulation);
-        System.out.println(clausules.toString());
+        //System.out.println(clausules.toString());
+
+        System.out.println("Algoritmo Genético para MAXSAT.");
 
         //Imprimimos las variables de la cláusula.
         //Clausule.printVariables(initialPopulation);
@@ -186,6 +155,7 @@ public class MAXSAT {
         //Imprimimos las cláusulas.
         Clausule.printClausules(initialPopulation);
 
+        System.out.print("La asignación de verdad que se tomó en cuenta es la siguiente: ");
         ArrayList<Integer> assignment = truthAssignment.create(initialPopulation[0].length);
         System.out.println(assignment.toString());
 
@@ -197,40 +167,42 @@ public class MAXSAT {
         // Calculamos el fitness de la población.
         int fitness = calculateFitness(resultTruthAssignment);
         System.out.println("El fitness de esta población es: "+fitness);
-//--------------------------------------------------------------------------//
-        System.out.println("Algoritmo Genético para MAXSAT.");
-
-        //MAXSAT maxsat = new MAXSAT();
 
         Scanner sc = new Scanner(System.in);
-        System.out.print("Decida el número de iteraciones: ");
-        int iter = sc.nextInt();
+        System.out.print("Digita el número de iteraciones: ");
+        int iteration = sc.nextInt();
 
-        for(int i=0; i < iter; i++) {
-            //Primero seleccionamos a los padres.
-            ArrayList<Clausule> padres = resultTruthAssignment;
-            ArrayList<Clausule> hijos = new ArrayList<>();
-            //Se van a sacar 20 hijos para la nueva generación.
-            for(int j=0;j<10;j++) {
-                int ico = ThreadLocalRandom.current().nextInt(2); //Para elegir al azar una combinación
-                Clausule padre1 = new Clausule(padres.get(ThreadLocalRandom.current().nextInt(padres.size()))); //Elige al primer padre de forma aleatoria.
-                Clausule padre2 = new Clausule(padres.get(ThreadLocalRandom.current().nextInt(padres.size()))); //Elige al segundo padre de forma aleatoria.
-                
-                ArrayList<Clausule> ht = ReproductionProcess.crossover(padre1, padre2, ico);
-                hijos.addAll(ht);
+        int best_i = 0, best_fitness = 0;
+        for(int i=0; i < iteration; i++) {
+            ArrayList<Clausule> children = new ArrayList<>();
+
+            for(int j = 0; j < 25; j++) {
+                Clausule parent1 = new Clausule(resultTruthAssignment.get(ThreadLocalRandom.current().nextInt(resultTruthAssignment.size())));
+                Clausule parent2 = new Clausule(resultTruthAssignment.get(ThreadLocalRandom.current().nextInt(resultTruthAssignment.size())));
+
+                ArrayList<Clausule> ht = ReproductionProcess.crossover(parent1, parent2, ThreadLocalRandom.current().nextInt(1));
+                children.addAll(ht);
             }
-            
-            for(Clausule h : hijos) {
-                int imu = ThreadLocalRandom.current().nextInt(100); //Para elegir una mutación aleatoria(solo si cae en 0 o 1).
-                ReproductionProcess.mutation(h, imu);
+
+            for(Clausule c : children) {
+                int prob = ThreadLocalRandom.current().nextInt(100); // La probabilidad es del 2%
+                ReproductionProcess.mutation(c, prob);
             }
-            
-            resultTruthAssignment.clear(); //Vaciamos la generación vigente.
-            
-            resultTruthAssignment.addAll(hijos); //La nueva generación serán los hijos.
-            
-            calculateFitness(resultTruthAssignment); //Calculamos los costos de la nueva generación
+
+            resultTruthAssignment.clear();
+            resultTruthAssignment.addAll(children);
+            //Clausule.printClausules(resultTruthAssignment);
+
+            fitness = calculateFitness(resultTruthAssignment); // Calculamos el fitness de la nueva generación
+            System.out.println("El fitness de la población "+ (i+1) +" es: "+fitness);
+
+            if(fitness > best_fitness) {
+                best_fitness = fitness;
+                best_i = i+1;
+            }
         }
+
+        System.out.println("La mejor población fue la "+ best_i +" que tiene un fitness de: "+ best_fitness);
     }
 
 }

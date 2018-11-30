@@ -76,6 +76,7 @@ class Clausule {
         return clausules;
     }
 
+
     public int getSatisfy() {
         return this.satisfy;
     }
@@ -102,6 +103,10 @@ class Clausule {
     public void setVariable(int i, int n) {
         this.variables.set(i, n);
     }
+    
+    public void removeVariable(int i) {
+        this.variables.remove(i);
+    }    
 
     public void copy(Clausule clausule){
         this.variables.clear();
@@ -127,6 +132,7 @@ class Clausule {
         return Arrays.deepToString(variables);
     }
 
+
     public static void printVariables(int[][] matrix) {
         Arrays.stream(matrix)
         .forEach(
@@ -143,6 +149,7 @@ class Clausule {
             }
         );
     }
+
 
     public static void printClausules(int[][] matrix) {
         int element;

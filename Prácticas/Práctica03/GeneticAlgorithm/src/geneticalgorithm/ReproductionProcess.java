@@ -24,14 +24,13 @@ public class ReproductionProcess {
         int corte1=10,corte2=0;
         int[] h1 = new int[parent1.variables.size()];
         int[] h2 = new int[parent1.variables.size()];
-        ArrayList<Integer> subsec1 = new ArrayList<>();
-        ArrayList<Integer> subsec2 = new ArrayList<>();
+        ArrayList<Integer> sub1 = new ArrayList<>();
+        ArrayList<Integer> sub2 = new ArrayList<>();
         for(int i=0;i<h1.length;i++) {
             h1[i] = -1;
             h2[i] = -1;
         }
         
-        //Esto es para asegurarnos de que el corte 2 sea mayor al corte 1.
         while(corte1 >= corte2) {
             corte1 = ThreadLocalRandom.current().nextInt(parent1.variables.size()-1);
             corte2 = ThreadLocalRandom.current().nextInt(parent1.variables.size()-1);
@@ -39,35 +38,26 @@ public class ReproductionProcess {
         
         for(int i = corte1+1; i <= corte2; i++) {
             h1[i]=parent2.variables.get(i);
-            subsec1.add(parent2.variables.get(i));
+            sub1.add(parent2.variables.get(i));
             h2[i]=parent1.variables.get(i);
-            subsec2.add(parent1.variables.get(i));
+            sub2.add(parent1.variables.get(i));
         }
         
         for(int i = 0; i < h1.length; i++) {
-            if(!subsec1.contains(parent1.variables.get(i)) && (i<=corte1 || i>corte2)) {
+            if(!sub1.contains(parent1.variables.get(i)) && (i<=corte1 || i>corte2)) {
                 h1[i] = parent1.variables.get(i);
-                subsec1.add(parent1.variables.get(i));
+                sub1.add(parent1.variables.get(i));
             }
 
-            if(!subsec2.contains(parent2.variables.get(i)) && (i<=corte1 || i>corte2)) {
+            if(!sub2.contains(parent2.variables.get(i)) && (i<=corte1 || i>corte2)) {
                 h2[i] = parent2.variables.get(i);
-                subsec2.add(parent2.variables.get(i));
+                sub2.add(parent2.variables.get(i));
             }
         }
-        
-        parent1.variables.removeAll(subsec2);
-        parent2.variables.removeAll(subsec1);
-        
-        for(int i=0; i<h1.length; i++) {
-            if(h1[i] == -1) {
-                h1[i] = parent2.variables.remove(0);
-            }
-            if(h2[i] == -1) {
-                h2[i] = parent1.variables.remove(0);
-            }
-        }
-        
+
+        parent1.variables.removeAll(sub2);
+        parent2.variables.removeAll(sub1);
+
         Clausule tn1 = new Clausule(h1);
         Clausule tn2 = new Clausule(h2);
         
@@ -95,7 +85,6 @@ public class ReproductionProcess {
             h2[i] = -1;
         }
         
-        //Esto es para asegurarnos de que el corte 2 sea mayor al corte 1.
         while(corte1 >= corte2) {
             corte1 = ThreadLocalRandom.current().nextInt(parent1.variables.size()-1);
             corte2 = ThreadLocalRandom.current().nextInt(parent1.variables.size()-1);
@@ -110,16 +99,6 @@ public class ReproductionProcess {
         
         parent1.variables.removeAll(subsec1);
         parent2.variables.removeAll(subsec2);
-        
-        for(int i=0;i<h1.length;i++) {
-            if(h1[i]==-1) {
-                h1[i] = parent1.variables.remove(0);
-            }
-            
-            if(h2[i]==-1) {
-                h2[i] = parent2.variables.remove(0);
-            }
-        }
         
         Clausule tn1 = new Clausule(h1);
         Clausule tn2 = new Clausule(h2);
@@ -139,7 +118,7 @@ public class ReproductionProcess {
      * @return array El arreglo como resultado de aplicar crossover.
      */
     public static ArrayList<Clausule> crossover(Clausule parent1, Clausule parent2, int n) {
-        ArrayList<Clausule> array;
+        ArrayList<Clausule> array = new ArrayList<>();
         switch(n) {
             case 0:
                 array = partiallyMappedCrossover(parent1, parent2);
@@ -147,38 +126,34 @@ public class ReproductionProcess {
             case 1:
                 array = orderCrossover(parent1, parent2);
                 break;
-            default:
-                array = new ArrayList<>();
-                break;
         }
         return array;
     }
     
     /**
-     * Aplica la mutación de inserción y desplazamiento al tour que recibe.
+     * Aplica la mutación de inserción y desplazamiento a la cláusula que recibe.
      * @param clausule La cláusula donde vamos a aplicar displacement.
      */
     public static void displacement(Clausule clausule) {
         int i1 = ThreadLocalRandom.current().nextInt(clausule.variables.size());
         int i2 = ThreadLocalRandom.current().nextInt(clausule.variables.size());
         Integer temp = clausule.variables.remove(i1);
-        clausule.variables.add(i2,temp);
+        clausule.variables.add(i2, temp);
     }
     
     /**
-     * Aplica la mutación de intercambio al tour que recibe.
+     * Aplica la mutación de intercambio a la cláusula que recibe.
      * @param clausule La cláusula donde vamos a aplicar exchange.
      */
     public static void exchange(Clausule clausule) {
         int i1 = ThreadLocalRandom.current().nextInt(clausule.variables.size());
         int i2 = ThreadLocalRandom.current().nextInt(clausule.variables.size());
-        Integer temp = clausule.variables.get(i1);
         clausule.variables.set(i1, clausule.variables.get(i2));
-        clausule.variables.set(i2, temp);
+        clausule.variables.set(i2, clausule.variables.get(i1));
     }
     
     /**
-     * Aplica la mutación a un tour.
+     * Aplica la mutación ala cláusula.
      * @param clausule Cláusula donde vamos a aplicar la mutación.
      * @param n Entero para ecoger la mutación.
      */
